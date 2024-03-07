@@ -1,0 +1,1 @@
+1. DirectShowPlayerService::doRender: Unresolved error code 0x8040266 (IDisspatch error #102)） pyqt播放器无法播放mp4视频，需要下载解码器： K-Lite Codec Pack
