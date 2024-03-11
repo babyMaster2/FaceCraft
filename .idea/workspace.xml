@@ -4,33 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff129116-aeaa-447b-af93-0f5ca8b9ce5f" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/FaceCraft.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/icon/mj.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/img/lyf_01.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/img/lyf_02.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/models/haarcascade_eye.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/models/haarcascade_frontalface_default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/video/avi.avi" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/video/shameless.mp4" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/docs/questions.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/dispose_ui/MainWin.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/dispose_ui/Widget.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/try.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/face_detection.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/tools.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/utils/try.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ui/main_win.ui" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ui/widget_camera.ui" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ui/widget_img.ui" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ui/widget_video.ui" afterDir="false" />
+    <list default="true" id="ff129116-aeaa-447b-af93-0f5ca8b9ce5f" name="更改" comment="1">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +23,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 4
 }</component>
@@ -72,14 +51,15 @@
     &quot;Python.try2.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/0_PyCode/FaceCraft/data2&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/AllPyCode/FaceCraft&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -93,10 +73,9 @@
       <recent name="D:\0_PyCode\FaceCraft\src\dispose_ui" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.MainWin (1)">
+  <component name="RunManager" selected="Python.Widget">
     <configuration name="MainWin (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="FaceCraft" />
-      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -119,7 +98,6 @@
     </configuration>
     <configuration name="Widget" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="FaceCraft" />
-      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -142,7 +120,6 @@
     </configuration>
     <configuration name="face_detection" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="FaceCraft" />
-      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -165,7 +142,6 @@
     </configuration>
     <configuration name="try (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="FaceCraft" />
-      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -188,7 +164,6 @@
     </configuration>
     <configuration name="try" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="FaceCraft" />
-      <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
@@ -211,9 +186,9 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.Widget" />
         <item itemvalue="Python.MainWin (1)" />
         <item itemvalue="Python.try" />
-        <item itemvalue="Python.Widget" />
         <item itemvalue="Python.try (1)" />
         <item itemvalue="Python.face_detection" />
       </list>
@@ -253,7 +228,82 @@
       <workItem from="1708440071700" duration="1771000" />
       <workItem from="1708592860470" duration="22000" />
       <workItem from="1709021602845" duration="4650000" />
+      <workItem from="1709815748282" duration="548000" />
+      <workItem from="1709816374545" duration="868000" />
+      <workItem from="1709817262272" duration="36000" />
+      <workItem from="1709817308681" duration="1104000" />
+      <workItem from="1709818569629" duration="7000" />
+      <workItem from="1709818726594" duration="736000" />
+      <workItem from="1709870326581" duration="594000" />
+      <workItem from="1709896212688" duration="1194000" />
+      <workItem from="1709904975868" duration="4000" />
+      <workItem from="1709993430672" duration="4682000" />
+      <workItem from="1710047936927" duration="252000" />
+      <workItem from="1710074363291" duration="110000" />
+      <workItem from="1710074487980" duration="11917000" />
+      <workItem from="1710134146173" duration="7788000" />
+      <workItem from="1710147830148" duration="2876000" />
+      <workItem from="1710150759481" duration="859000" />
+      <workItem from="1710151635578" duration="3333000" />
+      <workItem from="1710164456783" duration="2658000" />
     </task>
+    <task id="LOCAL-00001" summary="1">
+      <option name="closed" value="true" />
+      <created>1710165387977</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1710165387977</updated>
+    </task>
+    <task id="LOCAL-00002" summary="1">
+      <option name="closed" value="true" />
+      <created>1710165892885</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1710165892885</updated>
+    </task>
+    <task id="LOCAL-00003" summary="1">
+      <option name="closed" value="true" />
+      <created>1710166033554</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1710166033554</updated>
+    </task>
+    <task id="LOCAL-00004" summary="1">
+      <option name="closed" value="true" />
+      <created>1710166149072</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1710166149072</updated>
+    </task>
+    <task id="LOCAL-00005" summary="1">
+      <option name="closed" value="true" />
+      <created>1710166487205</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1710166487205</updated>
+    </task>
+    <task id="LOCAL-00006" summary="1">
+      <option name="closed" value="true" />
+      <created>1710166666432</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1710166666432</updated>
+    </task>
+    <task id="LOCAL-00007" summary="1">
+      <option name="closed" value="true" />
+      <created>1710166884611</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1710166884611</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -272,16 +322,18 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <MESSAGE value="1" />
+    <option name="LAST_COMMIT_MESSAGE" value="1" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/FaceCraft$try2.coverage" NAME="try2 覆盖结果" MODIFIED="1707294812822" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/FaceCraft$face_detection.coverage" NAME="face_detection 覆盖结果" MODIFIED="1707414609681" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/utils" />
+    <SUITE FILE_PATH="coverage/FaceCraft$try__1_.coverage" NAME="try (1) 覆盖结果" MODIFIED="1709994100645" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/FaceCraft$try.coverage" NAME="try 覆盖结果" MODIFIED="1710048128422" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/utils" />
     <SUITE FILE_PATH="coverage/FaceCraft$dispose_ui.coverage" NAME="dispose_ui 覆盖结果" MODIFIED="1705479063056" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/FaceCraft$face_detection_img.coverage" NAME="face_detection_img 覆盖结果" MODIFIED="1707224016685" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/FaceCraft$try2.coverage" NAME="try2 覆盖结果" MODIFIED="1707294812822" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/FaceCraft$MainWin__1_.coverage" NAME="MainWin (1) 覆盖结果" MODIFIED="1707992938355" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/dispose_ui" />
-    <SUITE FILE_PATH="coverage/FaceCraft$try.coverage" NAME="try 覆盖结果" MODIFIED="1707581807762" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/utils" />
-    <SUITE FILE_PATH="coverage/FaceCraft$face_detection.coverage" NAME="face_detection 覆盖结果" MODIFIED="1707414609681" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/utils" />
-    <SUITE FILE_PATH="coverage/FaceCraft$try__1_.coverage" NAME="try (1) 覆盖结果" MODIFIED="1707566159508" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/FaceCraft$Widget.coverage" NAME="Widget 覆盖结果" MODIFIED="1710154989179" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/dispose_ui" />
     <SUITE FILE_PATH="coverage/FaceCraft$face_detection_img__1_.coverage" NAME="face_detection_img (1) 覆盖结果" MODIFIED="1705416933868" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/FaceCraft$Widget.coverage" NAME="Widget 覆盖结果" MODIFIED="1707580085033" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/dispose_ui" />
+    <SUITE FILE_PATH="coverage/FaceCraft$MainWin__1_.coverage" NAME="MainWin (1) 覆盖结果" MODIFIED="1710086299989" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src/dispose_ui" />
   </component>
 </project>

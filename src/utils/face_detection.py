@@ -6,15 +6,6 @@ from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QPixmap
 
 
-# def show_single(cap):
-#     flag, frame = cap.read()
-#     if flag:
-#         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-#         img = QImage(gray.data, frame.shape[1], frame.shape[0], frame.shape[1] * 3, QImage.Format_RGB888)
-#         return QPixmap.fromImage(img)
-#     else:
-#         cap.release()
-#         return None
 def face_eye_detection(func):
     def wrapper(img):
         gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
@@ -22,7 +13,7 @@ def face_eye_detection(func):
         face_detector = cv.CascadeClassifier('../../data/models/haarcascade_frontalface_default.xml')
         eye_detector = cv.CascadeClassifier('../../data/models/haarcascade_eye.xml')
 
-        faces = face_detector.detectMultiScale(gray, 1.05, 5)
+        faces = face_detector.detectMultiScale(gray, 1.05, 5, flags=cv.CASCADE_SCALE_IMAGE)
 
         for (x, y, w, h) in faces:
             roi_gray = gray[y:y + h, x:x + w]
@@ -33,6 +24,7 @@ def face_eye_detection(func):
                 func(img, x, y, w, h, roi_color, eyes)
 
         return img
+
     return wrapper
 
 
@@ -52,3 +44,28 @@ def vfx_mianju(img, x, y, w, h, roi_color, eyes):
     # 在Python中，图像数据通常以numpy数组的形式存储，其中第一个维度（y轴）代表高
     # 度，第二个维度（x轴）代表宽度。
     img[y:y + h, x:x + w] = overlay_img_resized
+
+
+def video_face_detect():
+    pass
+
+
+
+
+
+# detector = dlib.get_frontal_face_detector()
+#
+#
+# def face_detect2(func):
+#     def wrapper(img):
+#         gray = cv.cvtColor(img, cv.COLOR_BGR2RGB)  # Dlib uses RGB color space
+#
+#         # Use dlib's face detector
+#         faces = detector(gray)
+#
+#         for rect in faces:
+#             x = rect.left()
+#             y = rect.top()
+#             w = rect.width()
+#             h = rect.height()
+#             roi_color = img[y:y + h, x:x + w]
