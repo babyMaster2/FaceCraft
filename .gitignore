@@ -7,3 +7,4 @@ __pycache__/
 
 # 忽略所有 .xml文件
 *.xml
+*.iml
