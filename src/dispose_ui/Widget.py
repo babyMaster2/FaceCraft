@@ -11,43 +11,93 @@ from src.utils.tools import *
 from src.utils.face_detection import *
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
 import time
+from PyQt5.QtWidgets import QFileDialog, QLCDNumber
+
 
 class MyImg(QWidget):
     def __init__(self, image_path=None):
         super().__init__()
         self.ui = loadUi("../../ui/widget_img.ui", self)
         self.label = self.ui.findChild(QLabel, "label")
+        self.ui.toolButton_1.mousePressEvent = self.img_rec
+        self.ui.toolButton_2.mousePressEvent = self.img_save
+        self.ui.toolButton_3.mousePressEvent = self.display_image
+        self.ui.toolButton_4.mousePressEvent = self.change_image
+
+        self.ui.comboBox_1.currentIndexChanged.connect(self.choose_algorithm)
+        self.ui.comboBox_2.currentIndexChanged.connect(self.hat_choose)
+        self.ui.comboBox_3.currentIndexChanged.connect(self.glass_choose)
+        self.ui.comboBox_4.currentIndexChanged.connect(self.mask_choose)
+
+        self.algorith = 'haar'
+        self.choose_algorithm("")
+        self.image_path = image_path
+        self.lcd_value = self.ui.lcdNumber.value()
 
         self.ui.show()
 
-        self.image_path = image_path
-
-        self.ui.toolButton.mousePressEvent = self.img_rec
-
-        self.ui.comboBox.currentIndexChanged.connect(self.image_vfx)
-
-    def display_image(self):
+    def display_image(self, event):
         pixmap = QPixmap(self.image_path)
         pixmap = pixmap.scaled(self.label.width(), self.label.height())
         self.label.setPixmap(pixmap)
 
     def img_rec(self, event):
-        qimg = img_recognize(self.image_path)
+        time_start = time.time()
+
+        qimg = img_recognize(self.image_path, self.algorith)
+
         pixmap = QPixmap.fromImage(qimg)
         pixmap = pixmap.scaled(self.label.width(), self.label.height())
         self.label.setPixmap(pixmap)
 
-    def image_vfx(self, event):
-        current_option = self.ui.comboBox.currentText()
-        if current_option == '面具':
-            img = cv.imread(self.image_path)
+        time_end = time.time()
+        self.lcd_value = time_end - time_start
+        self.ui.lcdNumber.display(self.lcd_value)
 
-            img = vfx_mianju(img)
-            qimg = BGR_to_RGB(img)
+    def img_save(self, event):
+        img = self.label.pixmap().toImage()
+        file_dialog = QFileDialog()
+        save_path, _ = file_dialog.getSaveFileName(self, '保存图片', '', '图片文件 (*.jpg *.png)')
+        if save_path:
+            img.save(save_path)
 
-            pixmap = QPixmap.fromImage(qimg)
-            pixmap = pixmap.scaled(self.label.width(), self.label.height())
-            self.label.setPixmap(pixmap)
+    def change_image(self, event):
+        file_dialog = QFileDialog()
+        img_path = self.image_path
+        self.image_path, _ = file_dialog.getOpenFileName(self, '选择图片', '', '图片文件 (*.jpg *.png)')
+        if self.image_path:
+            self.display_image(event)
+        else:
+            self.image_path = img_path
+
+    def vfx_choose(self, event, combobox, vfx_type):
+        current_option = combobox.currentText()
+
+        img = self.label.pixmap().toImage()
+        img = convert_qimage_to_mat(img)
+
+        img = add_vfx(img, vfx_type, current_option)
+
+        qimg = BGR_to_RGB(img)
+        pixmap = QPixmap.fromImage(qimg)
+        pixmap = pixmap.scaled(self.label.width(), self.label.height())
+        self.label.setPixmap(pixmap)
+
+    def hat_choose(self, event):
+        self.vfx_choose(event, self.ui.comboBox_2, 'hats')
+
+    def glass_choose(self, event):
+        self.vfx_choose(event, self.ui.comboBox_3, 'glasses')
+
+    def mask_choose(self, event):
+        self.vfx_choose(event, self.ui.comboBox_4, 'masks')
+
+    def choose_algorithm(self, event):
+        current_option = self.ui.comboBox_1.currentText()
+        self.algorith = current_option
+
+    def closeEvent(self, a0):
+        super().closeEvent(a0)
 
 
 class MyCam(QWidget):
@@ -55,61 +105,88 @@ class MyCam(QWidget):
         super().__init__()
         self.ui = loadUi("../../ui/widget_camera.ui", self)
         self.display_label = self.ui.findChild(QLabel, "label")
-        self.ui.show()
+
+        self.algorith = 'haar'
         self.cap = None
         self.timer = None
         self.face_recognition = False  # Add this line
-        #  跟踪器
-        self.tracker = cv.TrackerKCF_create()  # Add this line
-        self.tracking = False  # Add this line
 
-        self.ui.toolButton.mousePressEvent = self.cam_rec
+        self.face_vfx = False
+        self.vfx_dict = {}
 
-    def display_camera(self):
+        self.ui.toolButton_1.mousePressEvent = self.cam_rec
+        self.ui.toolButton_2.mousePressEvent = self.change_camera
+        self.ui.toolButton_3.mousePressEvent = self.cleared_thing
+
+        self.ui.comboBox_1.currentIndexChanged.connect(self.choose_algorithm)
+        self.ui.comboBox_2.currentIndexChanged.connect(self.hat_choose)
+        self.ui.comboBox_3.currentIndexChanged.connect(self.glass_choose)
+        self.ui.comboBox_4.currentIndexChanged.connect(self.mask_choose)
+
+        self.lcd_value = self.ui.lcdNumber.value()
+
+        self.ui.show()
+
+    def display_camera(self, event):
         # todo  选择摄像头
         self.cap = cv.VideoCapture(0, cv.CAP_DSHOW)
         self.timer = QTimer()
         self.timer.timeout.connect(self.update_frame)
-        self.timer.start(int(1000. / 24))  # 24 frames per second
-
-    # def update_frame(self):
-    #     ret, frame = self.cap.read()
-    #     if ret:
-    #         frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-    #         if self.face_recognition:  # Add this line
-    #             frame = face_detect(frame)
-    #         img = QImage(frame.data, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
-    #         pix = QPixmap.fromImage(img)
-    #         pix = pix.scaled(self.display_label.width(), self.display_label.height())
-    #         self.display_label.setPixmap(pix)
+        self.timer.start()  # 24 frames per second
 
     def update_frame(self):
+        tm = cv.TickMeter()  # Create a TickMeter object
+        tm.start()  # Start the timer
+
         ret, frame = self.cap.read()
+
         if ret:
             frame = cv.cvtColor(frame, cv.COLOR_BGR2RGB)
-            if self.face_recognition and not self.tracking:  # Add this line
-                face_locations = face_detect(frame)
-                if len(face_locations) > 0:
-                    # Ensure the bounding box is in the format (x, y, w, h)
-                    bbox = tuple(face_locations[0])
-                    if len(bbox) == 4:
-                        self.tracker.init(frame, bbox)
-                        self.tracking = True
-            elif self.tracking:  # Add this line
-                success, bbox = self.tracker.update(frame)
-                if success:
-                    p1 = (int(bbox[0]), int(bbox[1]))
-                    p2 = (int(bbox[0] + bbox[2]), int(bbox[1] + bbox[3]))
-                    cv.rectangle(frame, p1, p2, (255, 0, 0), 2, 1)
-                else:
-                    self.tracking = False
+            if self.face_recognition:  # Add this line
+                frame = recognize_algorithms[self.algorith](frame)
+            if self.face_vfx:
+                for vfx_type, current_option in self.vfx_dict.items():
+                    frame = add_vfx(frame, vfx_type, current_option)
+
             img = QImage(frame.data, frame.shape[1], frame.shape[0], QImage.Format_RGB888)
+
             pix = QPixmap.fromImage(img)
             pix = pix.scaled(self.display_label.width(), self.display_label.height())
             self.display_label.setPixmap(pix)
 
+        tm.stop()  # Stop the timer
+        fps = 1 / tm.getTimeSec()  # Calculate the FPS
+        self.lcd_value = fps
+        self.ui.lcdNumber.display(self.lcd_value)
+
     def cam_rec(self, event):
         self.face_recognition = not self.face_recognition  # Add this line
+
+    def hat_choose(self, event):
+        self.vfx_choose(event, self.ui.comboBox_2, 'hats')
+
+    def glass_choose(self, event):
+        self.vfx_choose(event, self.ui.comboBox_3, 'glasses')
+
+    def mask_choose(self, event):
+        self.vfx_choose(event, self.ui.comboBox_4, 'masks')
+
+    def vfx_choose(self, event, combobox, vfx_type):
+        current_option = combobox.currentText()
+        self.face_vfx = True
+        self.vfx_dict[vfx_type] = current_option
+
+    def choose_algorithm(self, event):
+        current_option = self.ui.comboBox_1.currentText()
+        self.algorith = current_option
+
+    def change_camera(self, event):
+        pass
+
+    def cleared_thing(self, event):
+        self.face_recognition = False
+        self.face_vfx = False
+        self.vfx_dict = {}
 
     def closeEvent(self, a0):
         self.cap.release()
@@ -132,11 +209,14 @@ class MyVideo(QVideoWidget):
         self.video_path = video_path
 
         self.ui.show()
+        self.algorith = 'haar'
 
         self.ui.toolButton.mousePressEvent = self.video_play_paused
         self.ui.toolButton_2.mousePressEvent = self.video_666
         self.ui.toolButton_3.mousePressEvent = self.video_replay
-        self.ui.comboBox.currentIndexChanged.connect(self.video_vfx)
+
+        self.ui.comboBox_1.currentIndexChanged.connect(self.choose_algorithm)
+        self.ui.comboBox_2.currentIndexChanged.connect(self.video_vfx)
 
         self.run = True
         self.lock = threading.Lock()
@@ -197,23 +277,27 @@ class MyVideo(QVideoWidget):
                 print(f"Video processing finished in {self.end_time - self.start_time} seconds.")
                 print("Video processing finished.")
 
+    def choose_algorithm(self, event):
+        current_option = self.ui.comboBox_1.currentText()
+        self.algorith = current_option
+
     def closeEvent(self, event):
         self.media_player.stop()
         super().closeEvent(event)
 
 
 if __name__ == '__main__':
+    # app = QApplication(sys.argv)
+    # video = MyVideo('../../data/video/shameless.mp4')
+    # video.display_video()
+    # sys.exit(app.exec_())
+
+    # app = QApplication(sys.argv)
+    # label = MyImg('../../data/img/555472.jpg')
+    # label.display_image("")
+    # sys.exit(app.exec_())
+
     app = QApplication(sys.argv)
-    video = MyVideo('../../data/video/shameless.mp4')
-    video.display_video()
+    label = MyCam()
+    label.display_camera("")
     sys.exit(app.exec_())
-
-    # app = QApplication(sys.argv)
-    # label = MyImg('../../data/img/lyf_01.png')
-    # label.display_image()
-    # sys.exit(app.exec_())
-
-    # app = QApplication(sys.argv)
-    # label = MyCam()
-    # label.display_camera()
-    # sys.exit(app.exec_())
