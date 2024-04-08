@@ -1,2 +1,3 @@
 1. DirectShowPlayerService::doRender: Unresolved error code 0x8040266 (IDisspatch error #102)） pyqt播放器无法播放mp4视频，需要下载解码器： K-Lite Codec Pack
 2. AttributeError: module 'cv2' has no attribute 'TrackerKCF_create'  如果要使用OpenCV集成的跟踪器，就必须安装opencv-contrib-python包才行!: pip install opencv-contrib-python
+3. mediapipe 的安装要在py3.11

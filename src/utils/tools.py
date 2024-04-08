@@ -43,8 +43,10 @@ def convert_qimage_to_mat(incoming_image):
     height = incoming_image.height()
 
     ptr = incoming_image.bits()
+
     ptr.setsize(incoming_image.byteCount())
-    arr = np.array(ptr).reshape(height, width, 3)  # Copies the data
+
+    arr = np.array(ptr).reshape(height, width, 3)# Copies the data
     arr = cv.cvtColor(arr, cv.COLOR_RGB2BGR)
     return arr
 

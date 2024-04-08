@@ -9,10 +9,12 @@ from PyQt5.QtGui import QImage
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QPixmap
 from src.utils.tools import fix_icon, process_effects, swap_non_effcet, get_landmarks
+from functools import wraps
 
 
 # 使用Haar Cascade 进行人脸识别
 def face_detection_haar(func):
+    @wraps(func)
     def wrapper(img):
         gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
 
@@ -53,6 +55,7 @@ def vfx_mianju(img, x, y, w, h, roi_color, eyes):
 
 
 def face_detection_dnn(func):
+    @wraps(func)
     def wrapper(img, *args, **kwargs):
         h, w, _ = img.shape
 
@@ -103,6 +106,7 @@ def face_detect_dnn(img, face):
 
 
 def face_detection_mediapipe(func):
+    @wraps(func)
     def wrapper(img, *args, **kwargs):
         """
         :param img: ndarray图像

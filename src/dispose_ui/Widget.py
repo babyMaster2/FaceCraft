@@ -1,8 +1,9 @@
-from PyQt5.QtWidgets import QWidget, QApplication, QLabel, QToolButton
+from PyQt5.QtWidgets import QWidget, QApplication, QLabel, QToolButton, QMessageBox, QSpinBox
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.uic import loadUi
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtMultimediaWidgets import QVideoWidget
+import queue
 from PyQt5.QtCore import QUrl, QTimer
 import cv2 as cv
 import threading
@@ -12,6 +13,7 @@ from src.utils.face_detection import *
 from PyQt5.QtCore import QThread, pyqtSignal, Qt
 import time
 from PyQt5.QtWidgets import QFileDialog, QLCDNumber
+from PyQt5.QtWidgets import QProgressBar
 
 
 class MyImg(QWidget):
@@ -38,6 +40,7 @@ class MyImg(QWidget):
 
     def display_image(self, event):
         pixmap = QPixmap(self.image_path)
+
         pixmap = pixmap.scaled(self.label.width(), self.label.height())
         self.label.setPixmap(pixmap)
 
@@ -74,6 +77,9 @@ class MyImg(QWidget):
         current_option = combobox.currentText()
 
         img = self.label.pixmap().toImage()
+
+        # img = img.scaled(self.label.width(), self.label.height())
+
         img = convert_qimage_to_mat(img)
 
         img = add_vfx(img, vfx_type, current_option)
@@ -199,32 +205,84 @@ class MyVideo(QVideoWidget):
         super().__init__()
 
         self.ui = loadUi("../../ui/widget_video.ui", self)
-        self.video_widget = self.ui.findChild(QVideoWidget, "videowidget")
 
+        self.video_widget = self.ui.findChild(QVideoWidget, "videowidget")
         self.media_player = QMediaPlayer()
         self.media_player.setVideoOutput(self.video_widget)
-
-        # self.tool = self.ui.findChild(QToolButton, "toolButton")
 
         self.video_path = video_path
 
         self.ui.show()
-        self.algorith = 'haar'
-
-        self.ui.toolButton.mousePressEvent = self.video_play_paused
-        self.ui.toolButton_2.mousePressEvent = self.video_666
-        self.ui.toolButton_3.mousePressEvent = self.video_replay
-
-        self.ui.comboBox_1.currentIndexChanged.connect(self.choose_algorithm)
-        self.ui.comboBox_2.currentIndexChanged.connect(self.video_vfx)
 
         self.run = True
+        self.cap = None
+        self.timer = None
+        self.vfx_thread = None
+
+        self.ui.spinBox = self.ui.findChild(QSpinBox, "spinbox")
+        self.ui.toolButton_1.mousePressEvent = self.add_video_vfx
+        self.ui.toolButton_2.mousePressEvent = self.video_play_paused
+        self.ui.toolButton_3.mousePressEvent = self.video_replay
+        self.ui.toolButton_4.mousePressEvent = self.change_video
+
+        self.ui.progressBar = self.ui.findChild(QProgressBar, "progressBar")
+
+        self.ui.comboBox_2.currentIndexChanged.connect(self.hat_choose)
+        self.ui.comboBox_3.currentIndexChanged.connect(self.glass_choose)
+        self.ui.comboBox_4.currentIndexChanged.connect(self.mask_choose)
+
+        self.label_1 = self.ui.findChild(QLabel, "label")
+        self.label_2 = self.ui.findChild(QLabel, "label_2")
+        self.label_3 = self.ui.findChild(QLabel, "label_3")
+
         self.lock = threading.Lock()
 
-    def display_video(self):
+    def display_video(self, event):
         video_url = QUrl.fromLocalFile(self.video_path)
         self.media_player.setMedia(QMediaContent(video_url))
         self.media_player.play()
+
+    def add_video_vfx(self, event):
+        if self.vfx_thread and self.vfx_thread.isRunning():
+            reply = QMessageBox.question(self, 'Message',
+                                         "当前有任务在进行，是否终结",
+                                         QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+            if reply == QMessageBox.Yes:
+                self.vfx_thread.quit()  # Use quit instead of terminate
+                self.vfx_thread.wait()  # Wait for the thread to finish
+            else:
+                return
+        else:
+            current_vfx_hat = self.ui.comboBox_2.currentText()
+            current_vfx_glass = self.ui.comboBox_3.currentText()
+            current_vfx_mask = self.ui.comboBox_4.currentText()
+
+            vfx_dict = {
+                'hats': current_vfx_hat,
+                'glasses': current_vfx_glass,
+                'masks': current_vfx_mask
+            }
+
+            file_dialog = QFileDialog()
+            save_path, _ = file_dialog.getSaveFileName(self, '保存视频', '', '视频文件 (*.mp4)')
+
+            self.vfx_thread = VFXThread(self.video_path, vfx_dict, self.ui.spinBox.value(), save_path)
+            self.vfx_thread.progress_signal.connect(self.ui.progressBar.setValue)
+            self.vfx_thread.finished.connect(self.on_vfx_thread_finished)  # Connect the finished signal to a slot
+            self.vfx_thread.start()
+
+            self.ui.comboBox_2.setEnabled(False)
+            self.ui.comboBox_3.setEnabled(False)
+            self.ui.comboBox_4.setEnabled(False)
+            self.ui.spinBox.setEnabled(False)
+
+    def on_vfx_thread_finished(self):
+        # Enable comboBoxes when processing finishes
+        self.ui.comboBox_2.setEnabled(True)
+        self.ui.comboBox_3.setEnabled(True)
+        self.ui.comboBox_4.setEnabled(True)
+        self.ui.spinBox.setEnabled(True)
 
     def video_play_paused(self, event):
         with self.lock:
@@ -235,69 +293,120 @@ class MyVideo(QVideoWidget):
                 self.media_player.play()
                 self.run = True
 
-    def video_666(self, event):
-        pass
-
     def video_replay(self, event):
         self.media_player.setPosition(0)
         self.media_player.play()
 
-    def video_vfx(self, event):
-        current_option = self.ui.comboBox.currentText()
-        print(f"Current option is: {current_option}")
-        if current_option == '面具':
-            self.start_time = time.time()
-            # Open the video file
-            cap = cv.VideoCapture(self.video_path)
+    def change_video(self, event):
+        file_dialog = QFileDialog()
+        video_path = self.video_path
+        self.video_path, _ = file_dialog.getOpenFileName(self, '选择视频', '', '视频文件 (*.mp4 *.avi)')
+        if self.video_path:
+            self.display_video("")
+        else:
+            self.video_path = video_path
 
-            # Get the video's width, height and frames per second (fps)
-            width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
-            height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
-            fps = cap.get(cv.CAP_PROP_FPS)
+    def hat_choose(self, event):
+        path = face_vfx['hats'][self.ui.comboBox_2.currentText()]
+        pixmap = QPixmap(f'../../data/icon/hats/{path}')
+        pixmap = pixmap.scaled(self.label_1.width(), self.label_1.height())
+        self.label_1.setPixmap(pixmap)
+        # self.vfx_choose(event, self.ui.comboBox_2, 'hats')
 
-            # Define the codec and create a VideoWriter object
-            fourcc = cv.VideoWriter_fourcc(*'mp4v')  # or use 'XVID'
-            out = cv.VideoWriter('../../data/video/output/output.mp4', fourcc, fps, (width, height))
+    def glass_choose(self, event):
+        path = face_vfx['glasses'][self.ui.comboBox_3.currentText()]
+        pixmap = QPixmap(f'../../data/icon/glasses/{path}')
+        pixmap = pixmap.scaled(self.label_2.width(), self.label_2.height())
+        self.label_2.setPixmap(pixmap)
+        # self.vfx_choose(event, self.ui.comboBox_3, 'glasses')
 
-            while cap.isOpened():
-                ret, frame = cap.read()
-                if not ret:
-                    break
-                # Apply the vfx_mianju function to the frame
-                frame = vfx_mianju(frame)
-
-                # Write the frame into the file 'output.mp4'
-                out.write(frame)
-            out.release()
-            cap.release()
-
-            # Check if the video processing is finished
-            if not cap.isOpened():
-                self.end_time = time.time()
-                print(f"Video processing finished in {self.end_time - self.start_time} seconds.")
-                print("Video processing finished.")
-
-    def choose_algorithm(self, event):
-        current_option = self.ui.comboBox_1.currentText()
-        self.algorith = current_option
+    def mask_choose(self, event):
+        path = face_vfx['masks'][self.ui.comboBox_4.currentText()]
+        pixmap = QPixmap(f'../../data/icon/masks/{path}')
+        pixmap = pixmap.scaled(self.label_3.width(), self.label_3.height())
+        self.label_3.setPixmap(pixmap)
+        # self.vfx_choose(event, self.ui.comboBox_4, 'masks')
 
     def closeEvent(self, event):
-        self.media_player.stop()
-        super().closeEvent(event)
+        if self.vfx_thread and self.vfx_thread.isRunning():
+            reply = QMessageBox.question(self, 'Message',
+                                         "当前有任务在进行，是否终结",
+                                         QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+
+            if reply == QMessageBox.Yes:
+                self.vfx_thread.quit()  # Use quit instead of terminate
+                self.vfx_thread.wait()  # Wait for the thread to finish
+                event.accept()
+            else:
+                event.ignore()
+        else:
+            event.accept()
+
+
+class VFXThread(QThread):
+    progress_signal = pyqtSignal(int)  # Add this line
+    finished = pyqtSignal()  # Add this line
+
+    def __init__(self, video_path, vfx_dict, spinBox_value, save_path=None):
+        super().__init__()
+        self.video_path = video_path
+        self.vfx_dict = vfx_dict
+        self.save_path = save_path
+        self.skip_frames = int(spinBox_value)
+
+    def run(self):
+        cap = cv.VideoCapture(self.video_path)
+
+        total_frames = int(cap.get(cv.CAP_PROP_FRAME_COUNT))
+        total_frames = total_frames // self.skip_frames  # Add this line
+
+        width = int(cap.get(cv.CAP_PROP_FRAME_WIDTH))
+        height = int(cap.get(cv.CAP_PROP_FRAME_HEIGHT))
+        fps = int(cap.get(cv.CAP_PROP_FPS))
+
+        if not self.save_path:
+            return
+
+        fourcc = cv.VideoWriter_fourcc(*'mp4v')  # or use 'XVID'
+        out = cv.VideoWriter(self.save_path, fourcc, fps, (width, height))
+
+        processed_frames = 0
+        frame_counter = 0  # Add this line
+
+        while cap.isOpened():
+            ret, frame = cap.read()
+            if ret:
+                frame_counter += 1  # Add this line
+                if frame_counter % self.skip_frames == 0:  # Add this line
+                    for vfx_type, current_option in self.vfx_dict.items():
+                        frame = add_vfx(frame, vfx_type, current_option)
+                    out.write(frame)
+
+                    processed_frames += 1
+                    progress = int((processed_frames / total_frames) * 100)
+                    self.progress_signal.emit(progress)
+                    print(f'Progress: {progress}%')
+
+            else:
+                break
+        cap.release()
+        out.release()
+
+        self.finished.emit()
 
 
 if __name__ == '__main__':
     # app = QApplication(sys.argv)
-    # video = MyVideo('../../data/video/shameless.mp4')
-    # video.display_video()
-    # sys.exit(app.exec_())
-
-    # app = QApplication(sys.argv)
-    # label = MyImg('../../data/img/555472.jpg')
-    # label.display_image("")
+    # video = MyVideo('../../data/video/dy.mp4')
+    # video.display_video("")
     # sys.exit(app.exec_())
 
     app = QApplication(sys.argv)
-    label = MyCam()
-    label.display_camera("")
+    label = MyImg('../../data/img/555472.jpg')
+    label.display_image("")
     sys.exit(app.exec_())
+
+    # app = QApplication(sys.argv)
+    # label = MyCam()
+    # label.display_camera("")
+    # sys.exit(app.exec_())

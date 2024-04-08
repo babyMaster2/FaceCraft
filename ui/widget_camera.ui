@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1055</width>
-    <height>844</height>
+    <width>930</width>
+    <height>800</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,9 +16,9 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>40</x>
+     <x>30</x>
      <y>40</y>
-     <width>944</width>
+     <width>721</width>
      <height>531</height>
     </rect>
    </property>
@@ -117,9 +117,9 @@
   <widget class="QLCDNumber" name="lcdNumber">
    <property name="geometry">
     <rect>
-     <x>530</x>
-     <y>760</y>
-     <width>151</width>
+     <x>420</x>
+     <y>730</y>
+     <width>111</width>
      <height>61</height>
     </rect>
    </property>
@@ -127,9 +127,9 @@
   <widget class="QTextBrowser" name="textBrowser">
    <property name="geometry">
     <rect>
-     <x>530</x>
-     <y>710</y>
-     <width>151</width>
+     <x>420</x>
+     <y>680</y>
+     <width>111</width>
      <height>51</height>
     </rect>
    </property>
@@ -144,9 +144,9 @@ p, li { white-space: pre-wrap; }
   <widget class="QFrame" name="frame_2">
    <property name="geometry">
     <rect>
-     <x>690</x>
-     <y>610</y>
-     <width>321</width>
+     <x>570</x>
+     <y>580</y>
+     <width>301</width>
      <height>221</height>
     </rect>
    </property>
