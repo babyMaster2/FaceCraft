@@ -69,12 +69,12 @@ class MyMainWin(QMainWindow):
 
         elif self.video_path:
             video = MyVideo(self.video_path)
-            video.display_video()
+            video.display_video("")
 
         elif self.camera:
             # cap = cv.VideoCapture(0)
             label = MyCam()
-            label.display_camera()
+            label.display_camera("")
         else:
             pass
 
