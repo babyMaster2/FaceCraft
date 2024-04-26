@@ -14,6 +14,9 @@ from PyQt5.QtCore import QThread, pyqtSignal, Qt
 import time
 from PyQt5.QtWidgets import QFileDialog, QLCDNumber
 from PyQt5.QtWidgets import QProgressBar
+import PyQt5.QtCore as QtCore
+from PyQt5.QtCore import QCoreApplication
+import os
 
 
 class MyImg(QWidget):
@@ -212,8 +215,6 @@ class MyVideo(QVideoWidget):
 
         self.video_path = video_path
 
-        self.ui.show()
-
         self.run = True
         self.cap = None
         self.timer = None
@@ -237,45 +238,38 @@ class MyVideo(QVideoWidget):
 
         self.lock = threading.Lock()
 
+        self.ui.show()
+
     def display_video(self, event):
         video_url = QUrl.fromLocalFile(self.video_path)
         self.media_player.setMedia(QMediaContent(video_url))
         self.media_player.play()
 
     def add_video_vfx(self, event):
-        if self.vfx_thread and self.vfx_thread.isRunning():
-            reply = QMessageBox.question(self, 'Message',
-                                         "当前有任务在进行，是否终结",
-                                         QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+        file_dialog = QFileDialog()
+        save_path, _ = file_dialog.getSaveFileName(self, '保存视频', '', '视频文件 (*.mp4)')
+        if not save_path:
+            return
+        current_vfx_hat = self.ui.comboBox_2.currentText()
+        current_vfx_glass = self.ui.comboBox_3.currentText()
+        current_vfx_mask = self.ui.comboBox_4.currentText()
 
-            if reply == QMessageBox.Yes:
-                self.vfx_thread.quit()  # Use quit instead of terminate
-                self.vfx_thread.wait()  # Wait for the thread to finish
-            else:
-                return
-        else:
-            current_vfx_hat = self.ui.comboBox_2.currentText()
-            current_vfx_glass = self.ui.comboBox_3.currentText()
-            current_vfx_mask = self.ui.comboBox_4.currentText()
+        vfx_dict = {
+            'hats': current_vfx_hat,
+            'glasses': current_vfx_glass,
+            'masks': current_vfx_mask
+        }
 
-            vfx_dict = {
-                'hats': current_vfx_hat,
-                'glasses': current_vfx_glass,
-                'masks': current_vfx_mask
-            }
+        self.vfx_thread = VFXThread(self.video_path, vfx_dict, self.ui.spinBox.value(), save_path)
+        self.vfx_thread.progress_signal.connect(self.ui.progressBar.setValue)
+        self.vfx_thread.finished.connect(self.on_vfx_thread_finished)  # Connect the finished signal to a slot
+        self.vfx_thread.start()
 
-            file_dialog = QFileDialog()
-            save_path, _ = file_dialog.getSaveFileName(self, '保存视频', '', '视频文件 (*.mp4)')
-
-            self.vfx_thread = VFXThread(self.video_path, vfx_dict, self.ui.spinBox.value(), save_path)
-            self.vfx_thread.progress_signal.connect(self.ui.progressBar.setValue)
-            self.vfx_thread.finished.connect(self.on_vfx_thread_finished)  # Connect the finished signal to a slot
-            self.vfx_thread.start()
-
-            self.ui.comboBox_2.setEnabled(False)
-            self.ui.comboBox_3.setEnabled(False)
-            self.ui.comboBox_4.setEnabled(False)
-            self.ui.spinBox.setEnabled(False)
+        self.ui.comboBox_2.setEnabled(False)
+        self.ui.comboBox_3.setEnabled(False)
+        self.ui.comboBox_4.setEnabled(False)
+        self.ui.spinBox.setEnabled(False)
+        self.ui.toolButton_1.setEnabled(False)
 
     def on_vfx_thread_finished(self):
         # Enable comboBoxes when processing finishes
@@ -283,6 +277,7 @@ class MyVideo(QVideoWidget):
         self.ui.comboBox_3.setEnabled(True)
         self.ui.comboBox_4.setEnabled(True)
         self.ui.spinBox.setEnabled(True)
+        self.ui.toolButton_1.setEnabled(True)
 
     def video_play_paused(self, event):
         with self.lock:
@@ -329,14 +324,13 @@ class MyVideo(QVideoWidget):
 
     def closeEvent(self, event):
         if self.vfx_thread and self.vfx_thread.isRunning():
-            reply = QMessageBox.question(self, 'Message',
-                                         "当前有任务在进行，是否终结",
+            reply = QMessageBox.question(self, '警告',
+                                         "当前有任务在进行，是否终结任务并退出",
                                          QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
 
             if reply == QMessageBox.Yes:
-                self.vfx_thread.quit()  # Use quit instead of terminate
-                self.vfx_thread.wait()  # Wait for the thread to finish
-                event.accept()
+                self.vfx_thread.quit()
+                os.remove(self.vfx_thread.save_path)
             else:
                 event.ignore()
         else:
@@ -344,6 +338,7 @@ class MyVideo(QVideoWidget):
 
 
 class VFXThread(QThread):
+
     progress_signal = pyqtSignal(int)  # Add this line
     finished = pyqtSignal()  # Add this line
 
@@ -385,7 +380,6 @@ class VFXThread(QThread):
                     processed_frames += 1
                     progress = int((processed_frames / total_frames) * 100)
                     self.progress_signal.emit(progress)
-                    print(f'Progress: {progress}%')
 
             else:
                 break
@@ -396,15 +390,17 @@ class VFXThread(QThread):
 
 
 if __name__ == '__main__':
-    # app = QApplication(sys.argv)
-    # video = MyVideo('../../data/video/dy.mp4')
-    # video.display_video("")
-    # sys.exit(app.exec_())
+    QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
 
     app = QApplication(sys.argv)
-    label = MyImg('../../data/img/555472.jpg')
-    label.display_image("")
+    video = MyVideo('../../data/video/dy.mp4')
+    video.display_video("")
     sys.exit(app.exec_())
+
+    # app = QApplication(sys.argv)
+    # label = MyImg('../../data/img/555472.jpg')
+    # label.display_image("")
+    # sys.exit(app.exec_())
 
     # app = QApplication(sys.argv)
     # label = MyCam()

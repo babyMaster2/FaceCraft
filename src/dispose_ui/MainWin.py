@@ -3,7 +3,8 @@ import sys
 import cv2 as cv
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
 from PyQt5.uic import loadUi
-
+from PyQt5 import QtCore
+from PyQt5.QtCore import QCoreApplication
 from Widget import MyImg,MyCam, MyVideo
 # from src.utils.face_detection import show_single
 from PyQt5.QtGui import QPixmap
@@ -24,6 +25,10 @@ class MyMainWin(QMainWindow):
         self.ui.toolButton_2.mousePressEvent = self.select_video
         self.ui.toolButton_3.mousePressEvent = self.select_camera
         self.ui.pushButton.clicked.connect(self.process)
+
+        self.text_1 = self.ui.toolButton.text()
+        self.text_2 = self.ui.toolButton_2.text()
+        self.text_3 = self.ui.toolButton_3.text()
 
         # 初始化文件路径
         self.image_path = False
@@ -46,21 +51,25 @@ class MyMainWin(QMainWindow):
         if self.image_path:
             self.ui.toolButton.setText('已选择')
             self.initialize_choice('video_path', 'camera')
-        else:  # 如果用户没有选择文件
-            self.ui.toolButton.setText('未选择')
+        self.ui.toolButton_2.setText(self.text_2)
+        self.ui.toolButton_3.setText(self.text_3)
+        self.camera = False
 
     def select_video(self, event):
         self.video_path, _ = QFileDialog.getOpenFileName(self, '选择视频', '', '视频文件 (*.avi *.mp4)')
         if self.video_path:
             self.ui.toolButton_2.setText('已选择')
             self.initialize_choice('image_path', 'camera')
-        else:
-            self.ui.toolButton_2.setText('未选择')
+        self.ui.toolButton.setText(self.text_1)
+        self.ui.toolButton_3.setText(self.text_3)
+        self.camera = False
 
     def select_camera(self, event):
         self.camera = True
         self.ui.toolButton_3.setText('已选择')
         self.initialize_choice('image_path', 'video_path')
+        self.ui.toolButton.setText(self.text_1)
+        self.ui.toolButton_2.setText(self.text_2)
 
     def process(self):
         if self.image_path:
@@ -68,8 +77,8 @@ class MyMainWin(QMainWindow):
             label.display_image("")
 
         elif self.video_path:
-            video = MyVideo(self.video_path)
-            video.display_video("")
+            label = MyVideo(self.video_path)
+            label.display_video("")
 
         elif self.camera:
             # cap = cv.VideoCapture(0)
@@ -80,6 +89,7 @@ class MyMainWin(QMainWindow):
 
 
 if __name__ == "__main__":
+    QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
     main_win = MyMainWin()
     sys.exit(app.exec_())
