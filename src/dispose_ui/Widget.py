@@ -250,6 +250,7 @@ class MyVideo(QVideoWidget):
         save_path, _ = file_dialog.getSaveFileName(self, '保存视频', '', '视频文件 (*.mp4)')
         if not save_path:
             return
+
         current_vfx_hat = self.ui.comboBox_2.currentText()
         current_vfx_glass = self.ui.comboBox_3.currentText()
         current_vfx_mask = self.ui.comboBox_4.currentText()
@@ -324,15 +325,8 @@ class MyVideo(QVideoWidget):
 
     def closeEvent(self, event):
         if self.vfx_thread and self.vfx_thread.isRunning():
-            reply = QMessageBox.question(self, '警告',
-                                         "当前有任务在进行，是否终结任务并退出",
-                                         QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-
-            if reply == QMessageBox.Yes:
-                self.vfx_thread.quit()
-                os.remove(self.vfx_thread.save_path)
-            else:
-                event.ignore()
+            QMessageBox.warning(self, '警告', "当前有任务在进行，不能退出", QMessageBox.Ok)
+            event.ignore()
         else:
             event.accept()
 
@@ -387,6 +381,9 @@ class VFXThread(QThread):
         out.release()
 
         self.finished.emit()
+
+    def stop(self):
+        os.kill(self.currentThreadId(), 9)
 
 
 if __name__ == '__main__':

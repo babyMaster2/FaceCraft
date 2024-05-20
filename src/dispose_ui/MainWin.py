@@ -73,17 +73,16 @@ class MyMainWin(QMainWindow):
 
     def process(self):
         if self.image_path:
-            label = MyImg(self.image_path)
-            label.display_image("")
+            self.label = MyImg(self.image_path)
+            self.label.display_image("")
 
         elif self.video_path:
-            label = MyVideo(self.video_path)
-            label.display_video("")
+            self.label = MyVideo(self.video_path)
+            self.label.display_video("")
 
         elif self.camera:
-            # cap = cv.VideoCapture(0)
-            label = MyCam()
-            label.display_camera("")
+            self.label = MyCam()
+            self.label.display_camera("")
         else:
             pass
 

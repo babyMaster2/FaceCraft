@@ -35,23 +35,33 @@ def img_recognize(image_path, algorith):
 
 
 def convert_qimage_to_mat(incoming_image):
-    """ Converts a QImage to an opencv MAT format """
+    """
+    将QImage格式的图像转换为OpenCV的Mat格式。
+    :param incoming_image: QImage格式的图像
+    :return: 转换后的OpenCV Mat格式的图像
+    """
 
     incoming_image = incoming_image.convertToFormat(QImage.Format.Format_RGB888)
 
     width = incoming_image.width()
     height = incoming_image.height()
-
     ptr = incoming_image.bits()
-
     ptr.setsize(incoming_image.byteCount())
 
-    arr = np.array(ptr).reshape(height, width, 3)# Copies the data
+    arr = np.array(ptr).reshape(height, width, 3)  # Copies the data
     arr = cv.cvtColor(arr, cv.COLOR_RGB2BGR)
     return arr
 
 
 def fix_icon(small_img_gray, small_img, icon, kind):
+    """
+    修复特效图像,以淘汰
+    :param small_img_gray:
+    :param small_img:
+    :param icon:
+    :param kind:
+    :return:
+    """
     mask = cv.adaptiveThreshold(small_img_gray, 255, cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY_INV, 15, 2)
     if kind == 'hat':
         kernel = np.ones((10, 10), np.uint8)
@@ -76,18 +86,17 @@ def swap_non_effcet(effect, roi, threshold=240):
     :return: 消除背景后的特效图像
     """
 
-    # （1）特效图像灰度化
+    # 特效图像灰度化
     effect2gray = cv.cvtColor(effect, cv.COLOR_BGR2GRAY)
-    # （2）特效图像二值化
+    # 特效图像二值化
     ret, effect2wb = cv.threshold(effect2gray, threshold, 255, cv.THRESH_BINARY)
-    # （3）消除特效的白色背景
+    # 消除特效的白色背景
     effectwb = cv.bitwise_and(roi, roi, mask=effect2wb)
-
-    # （4）反转二值化后的特效
+    # 反转二值化后的特效
     effect2wb_ne = cv.bitwise_not(effect2wb)
-    # （5）处理彩色特效
+    # 处理彩色特效
     effectcolor = cv.bitwise_and(effect, effect, mask=effect2wb_ne)
-    # (6) 组合彩色特效与黑色特效
+    # 组合彩色特效与黑色特效
     effect_final = cv.add(effectcolor, effectwb)
 
     return effect_final

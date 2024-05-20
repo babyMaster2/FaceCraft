@@ -8,7 +8,7 @@ import time
 from PyQt5.QtGui import QImage
 from PyQt5.QtWidgets import QLabel
 from PyQt5.QtGui import QPixmap
-from src.utils.tools import fix_icon, process_effects, swap_non_effcet, get_landmarks
+from src.utils.tools import process_effects, swap_non_effcet, get_landmarks
 from functools import wraps
 
 
